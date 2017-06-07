@@ -1,8 +1,6 @@
 #!/bin/sh
-echo "Ethereum Wallet Transfer"
-echo "From"  $1
-echo "To" $2
-echo "Ammount" $3 
+
+
 
 pfile="./passwd"
 PASSWD=$(cat "$pfile")
@@ -13,6 +11,40 @@ echo "Your Wallet is:"
 ./geth --testnet --fast -exec "eth.accounts" attach 
 }
 
+
+#Check geth location
+ETH=$(which geth)  
+check_geth() {
+    STATUS=""
+    if [ -z $ETH ] && [ ! "$(ps -A | grep ether*)" ];  
+    then
+        STATUS="You need to install Ethereum CLI based on GoLang, or run Ethereum Wallet App"
+    else 
+        STATUS="OK"
+    fi
+    echo $STATUS
+}
+
+#Run ETHER server
+run_server() {
+    # execute eth and redirect all output to /dev/null
+    if ! $ETH --testnet --exec 'console.log("OK")' attach 2&>/dev/null  
+    then
+        # run eth webserver 
+        $ETH --testnet --ws --fast 2&> /tmp/wallet-server.log & 
+        # get server process PID
+        PID=`jobs -p`
+        echo $1
+        # until webserver is not created look for it
+        until grep -q 'WebSocket endpoint opened:' /tmp/wallet-server.log
+        do
+            sleep 3
+        done
+        # save the URL of server for future requests
+        URL=`grep 'WebSocket endpoint opened:'  /tmp/wallet-server.log | sed 's/^.*WebSocket endpoint opened: //'`
+        echo $URL,$PID
+    fi
+}
 
 
 #Unlock user account and send certain number of 'ether' 
@@ -25,16 +57,33 @@ TRANSACTION=`./geth --testnet --fast -exec "eth.sendTransaction({from: '$SENDER'
 echo $TRANSACTION
 }
 
+#Help
+help () {
+    printf "Script: "$0" provides the possibility to send ether from one account to another\n"
+}
+
 
 cli_main(){
 
 if [ ! -z $1 ] && [ $1 = "-h" ];
     then
-        #help
+        help
         exit
 fi
 
-#printf "$(send $1 $2 $3)\n"
+STATUS=$(check_geth)
+    if [[ $STATUS != *"OK" ]] || $([ ! -z $1 ] );
+    then
+        echo $STATUS
+        exit 
+fi
+
+#Start server if Ethereum app is not running
+if [ ! "$(ps -A | grep ether*)" ];
+	then
+	    SERVER=$(run_server)
+	fi
+
 
 while true
 do
@@ -47,9 +96,16 @@ do
 	printf "Please enter the AMOUNT of ethers:\n"
         read AMOUNT
 
-	TRANSACTION="$(send $SENDER $RECEIVER $AMOUNT)\n"
+	TRANSACTION="$(send $SENDER $RECEIVER $AMOUNT)"
+	echo "Transaction code is:"
+	echo $TRANSACTION
 	
-	exit
+	printf "Do you want make another transaction? (Y/N).\n"
+	read ANS
+	if [ $ANS != "Y" ];
+        then
+            exit
+	fi
 
 done
 
