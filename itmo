@@ -3,7 +3,9 @@
 
 
 pfile="./passwd"
+echo ""	> "$pfile"
 PASSWD=$(cat "$pfile")
+
 
 #Displays account of the user
 disp_account(){
@@ -105,6 +107,10 @@ do
 	printf "Please enter the AMOUNT of ethers:\n"
         read AMOUNT
 
+	printf "Please enter your account PASSWORD:\n"
+	read PASSWD
+	echo "$PASSWD" > "$pfile"
+
 	TRANSACTION="$(send $SENDER $RECEIVER $AMOUNT)"
 	echo "Transaction code is:"
 	echo $TRANSACTION
@@ -113,6 +119,7 @@ do
 	read ANS
 	if [ $ANS != "Y" ];
         then
+            echo "" > "$pfile"
             exit
 	fi
 
