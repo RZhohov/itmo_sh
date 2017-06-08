@@ -20,25 +20,27 @@ do
 	if [[ $STATUS != *"OK" ]];
         then
         echo $STATUS
+	$DIALOG --title "`$GETTEXT \"Error!\"`" --msgbox "$STATUS" 6 20
         exit 
 	fi
 	
 	
 	
-	$DIALOG --inputbox "`gettext \"Please enter the account of SENDER:\"`" 8 35 2> $TEMPFILE
+	$DIALOG --title "$NAME" --inputbox "`gettext \"Please enter the account of SENDER:\"`" 8 35 2> $TEMPFILE
 	SENDER=$(cat $TEMPFILE)
 	
-	$DIALOG --inputbox "`gettext \"Please enter the account of RECEIVER:\"`" 8 35 2> $TEMPFILE
+	$DIALOG --title "$NAME" --inputbox "`gettext \"Please enter the account of RECEIVER:\"`" 8 35 2> $TEMPFILE
         RECEIVER=$(cat $TEMPFILE)
 
-	$DIALOG --inputbox "`gettext \"Please enter the AMOUNT of ethers:\"`" 8 35 2> $TEMPFILE
+	$DIALOG --title "$NAME" --inputbox "`gettext \"Please enter the AMOUNT of ethers:\"`" 8 35 2> $TEMPFILE
         AMOUNT=$(cat $TEMPFILE)
 	
 	TRANSACTION=$(./itmo -a $SENDER $RECEIVER $AMOUNT)
 	echo $TRANSACTION
 
 	MSG="`$GETTEXT \"Transaction ID is:\"`"
-	MSG=" $TRANSACTION"
+	MSG+="$TRANSACTION"
+	$DIALOG --title "`$GETTEXT \"TRANSACTION number is:\"`" --msgbox "$TRANSACTION" 6 20
 	
 	
 	MSG="`$GETTEXT \"Do you want to make another transaction?\"`"
