@@ -34,8 +34,11 @@ do
 
 	$DIALOG --title "$NAME" --inputbox "`gettext \"Please enter the AMOUNT of ethers:\"`" 8 35 2> $TEMPFILE
         AMOUNT=$(cat $TEMPFILE)
+
+	$DIALOG --title "$NAME" --inputbox "`gettext \"Please enter the PASSWORD:\"`" 8 35 2> $TEMPFILE
+        PASSWD=$(cat $TEMPFILE)
 	
-	TRANSACTION=$(./itmo -a $SENDER $RECEIVER $AMOUNT)
+	TRANSACTION=$(./itmo -a $SENDER $RECEIVER $AMOUNT $PASSWD)
 	echo $TRANSACTION
 
 	MSG="`$GETTEXT \"Transaction ID is:\"`"

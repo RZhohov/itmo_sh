@@ -2,9 +2,6 @@
 
 
 
-pfile="./passwd"
-echo ""	> "$pfile"
-PASSWD=$(cat "$pfile")
 
 
 #Displays account of the user
@@ -54,6 +51,7 @@ send(){
 SENDER=$1
 RECEIVER=$2
 AMOUNT=$3
+PASSWD=$4
 ./geth --exec "personal.unlockAccount('$SENDER', '$PASSWD')" attach > /dev/null
 TRANSACTION=`./geth --testnet --fast -exec "eth.sendTransaction({from: '$SENDER', to: '$RECEIVER', value: web3.toWei('$AMOUNT', 'ether')})" attach`
 echo $TRANSACTION
@@ -90,7 +88,7 @@ if [ ! -z $1 ];
     then
         if [ $1 = "-a" ];
 then
-	    TRANSACTION="$(send $2 $3 $4)"
+	    TRANSACTION="$(send $2 $3 $4 $5)"
 	    echo $TRANSACTION
 	    exit	
 	fi
@@ -108,10 +106,9 @@ do
         read AMOUNT
 
 	printf "Please enter your account PASSWORD:\n"
-	read PASSWD
-	echo "$PASSWD" > "$pfile"
+	read -s PASSWD
 
-	TRANSACTION="$(send $SENDER $RECEIVER $AMOUNT)"
+	TRANSACTION="$(send $SENDER $RECEIVER $AMOUNT $PASSWD)"
 	echo "Transaction code is:"
 	echo $TRANSACTION
 	
