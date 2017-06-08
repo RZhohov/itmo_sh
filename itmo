@@ -100,10 +100,13 @@ do
 	printf "Please enter your account PASSWORD:\n"
 	read -s PASSWD
 
+	printf "Wait..."
+
 	TRANSACTION="$(send $SENDER $RECEIVER $AMOUNT $PASSWD)"
 	echo "Transaction code is:"
 	echo $TRANSACTION
 	
+		
 	printf "Do you want make another transaction? (Y/N).\n"
 	read ANS
 	if [ $ANS != "Y" ];
