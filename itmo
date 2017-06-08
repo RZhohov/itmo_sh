@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 
 
@@ -13,7 +13,7 @@ echo "Your Wallet is:"
 
 
 #Check geth location
-ETH=$(which geth)  
+ETH=$(which geth &>/dev/null)   
 check_geth() {
     STATUS=""
     if [ -z $ETH ] && [ ! "$(ps -A | grep ether*)" ];  
@@ -52,7 +52,7 @@ send(){
 SENDER=$1
 RECEIVER=$2
 AMOUNT=$3
-./geth --exec "personal.unlockAccount('$1', '$PASSWD')" attach > /dev/null
+./geth --exec "personal.unlockAccount('$SENDER', '$PASSWD')" attach > /dev/null
 TRANSACTION=`./geth --testnet --fast -exec "eth.sendTransaction({from: '$SENDER', to: '$RECEIVER', value: web3.toWei('$AMOUNT', 'ether')})" attach`
 echo $TRANSACTION
 }
@@ -72,7 +72,7 @@ if [ ! -z $1 ] && [ $1 = "-h" ];
 fi
 
 STATUS=$(check_geth)
-    if [[ $STATUS != *"OK" ]] || $([ ! -z $1 ] );
+if [[ $STATUS != *"OK" ]] || $([ ! -z $1 ] && [ $1 = "-s" ]);
     then
         echo $STATUS
         exit 
@@ -84,6 +84,15 @@ if [ ! "$(ps -A | grep ether*)" ];
 	    SERVER=$(run_server)
 	fi
 
+if [ ! -z $1 ];
+    then
+        if [ $1 = "-a" ];
+then
+	    TRANSACTION="$(send $2 $3 $4)"
+	    echo $TRANSACTION
+	    exit	
+	fi
+fi
 
 while true
 do

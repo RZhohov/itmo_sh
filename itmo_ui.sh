@@ -1,8 +1,23 @@
 #!/bin/sh
 
-which gdialog 2> /dev/null && DIALOG=gdialog || DIALOG=dialog
+MAIN=itmo
 
-while true
-do 
-	$DIALOG --inputbox "Enter FROM account:"
-done
+set_dialog() {
+    DIALOG=dialog
+    if [ ! -z $DISPLAY ]
+    then
+        which gdialog > /dev/null && DIALOG=gdialog || DIALOG=dialog
+    fi
+
+    echo $DIALOG
+}
+
+ui_main() {
+    NAME="Ether Sender"
+    DIALOG=$(set_dialog)
+
+    STATUS=$($MAIN)
+    echo $STATUS
+}
+
+ui_main
