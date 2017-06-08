@@ -1,14 +1,6 @@
 #!/bin/bash
 
-
-
-
-
-#Displays account of the user
-disp_account(){
-echo "Your Wallet is:"
-./geth --testnet --fast -exec "eth.accounts" attach 
-}
+#Sending ether form one account to another
 
 
 #Check geth location
@@ -87,7 +79,7 @@ if [ ! "$(ps -A | grep ether*)" ];
 if [ ! -z $1 ];
     then
         if [ $1 = "-a" ];
-then
+	then
 	    TRANSACTION="$(send $2 $3 $4 $5)"
 	    echo $TRANSACTION
 	    exit	
@@ -116,7 +108,6 @@ do
 	read ANS
 	if [ $ANS != "Y" ];
         then
-            echo "" > "$pfile"
             exit
 	fi
 

@@ -3,12 +3,17 @@
 TEMPFILE=/tmp/params-$$
 GETTEXT="gettext -d itmo_ui"
 
+#Set dialog
 set_dialog(){
 which gdialog 2> /dev/null && DIALOG=gdialog || DIALOG=dialog
 echo $DIALOG
 }
 
+
+
 ui_main() {
+    
+
     NAME="Ether Sender"
     DIALOG=$(set_dialog)
 
@@ -17,11 +22,11 @@ while true
 do
 
 	STATUS=$(./itmo -s)
-	if [[ $STATUS != *"OK" ]];
-        then
-        echo $STATUS
-	$DIALOG --title "`$GETTEXT \"Error!\"`" --msgbox "$STATUS" 6 20
-        exit 
+		if [[ $STATUS != *"OK" ]];
+        	then
+        	echo $STATUS
+		$DIALOG --title "`$GETTEXT \"Error!\"`" --msgbox "$STATUS" 6 20
+        	exit 
 	fi
 	
 	
