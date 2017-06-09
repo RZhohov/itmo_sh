@@ -4,7 +4,7 @@
 
 
 #Check geth location
-ETH=$(which geth &>/dev/null)   
+ETH=$(which geth 2>/dev/null)   
 check_geth() {
     STATUS=""
     if [ -z $ETH ] && [ ! "$(ps -A | grep ether*)" ];  
