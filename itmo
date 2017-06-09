@@ -44,9 +44,18 @@ SENDER=$1
 RECEIVER=$2
 AMOUNT=$3
 PASSWD=$4
-./geth --exec "personal.unlockAccount('$SENDER', '$PASSWD')" attach > /dev/null
-TRANSACTION=`./geth --testnet --fast -exec "eth.sendTransaction({from: '$SENDER', to: '$RECEIVER', value: web3.toWei('$AMOUNT', 'ether')})" attach`
-echo $TRANSACTION
+
+if [[ -z  $ETH ]];
+    then
+   	./geth --exec "personal.unlockAccount('$SENDER', '$PASSWD')" attach > /dev/null
+        TRANSACTION=`./geth --testnet --fast -exec "eth.sendTransaction({from: '$SENDER', to: '$RECEIVER', value: web3.toWei('$AMOUNT', 'ether')})" attach`
+        echo $TRANSACTION
+
+else
+	$ETH --exec "personal.unlockAccount('$SENDER', '$PASSWD')" attach > /dev/null
+	TRANSACTION=`$ETH --testnet --fast -exec "eth.sendTransaction({from: '$SENDER', to: '$RECEIVER', value: web3.toWei('$AMOUNT', 'ether')})" attach`
+	echo $TRANSACTION
+fi
 }
 
 #Help
