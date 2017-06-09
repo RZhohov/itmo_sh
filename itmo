@@ -109,9 +109,12 @@ do
 		
 	printf "Do you want make another transaction? (Y/N).\n"
 	read ANS
-	if [ $ANS != "Y" ];
-        then
+	if [ ! -z $ANS ];
+    		then
+        	if [ $ANS != "Y" ];
+        	then
             exit
+	fi
 	fi
 
 done
